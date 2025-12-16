@@ -16,13 +16,15 @@ function plot_classification_pie(data_file, output_file)
     data = read_lyapunov_csv(data_file);
 
     % Count classifications
-    regular_count = sum(strcmp(data.classification, 'regular'));
-    sensitive_count = sum(strcmp(data.classification, 'sensitive'));
-    chaotic_count = sum(strcmp(data.classification, 'chaotic'));
+    trivial_count = sum(strcmp(data.classification, 'trivial'));
+    weakly_count = sum(strcmp(data.classification, 'weakly_chaotic'));
+    strongly_count = sum(strcmp(data.classification, 'strongly_chaotic'));
+    extremely_count = sum(strcmp(data.classification, 'extremely_chaotic'));
 
-    counts = [regular_count, sensitive_count, chaotic_count];
-    labels = {'Regular', 'Sensitive', 'Chaotic'};
-    colors = [0.2, 0.4, 0.8; ...  % blue
+    counts = [trivial_count, weakly_count, strongly_count, extremely_count];
+    labels = {'Trivial', 'Weakly Chaotic', 'Strongly Chaotic', 'Extremely Chaotic'};
+    colors = [0.5, 0.5, 0.5; ...  % gray
+              0.2, 0.4, 0.8; ...  % blue
               1.0, 0.6, 0.0; ...  % orange
               0.9, 0.2, 0.2];     % red
 
@@ -56,9 +58,10 @@ function plot_classification_pie(data_file, output_file)
 
     print(output_file, '-dpng', '-r300');
     fprintf('Saved: %s\n', output_file);
-    fprintf('  Regular: %d (%.1f%%)\n', regular_count, 100*regular_count/sum(counts));
-    fprintf('  Sensitive: %d (%.1f%%)\n', sensitive_count, 100*sensitive_count/sum(counts));
-    fprintf('  Chaotic: %d (%.1f%%)\n', chaotic_count, 100*chaotic_count/sum(counts));
+    fprintf('  Trivial: %d (%.1f%%)\n', trivial_count, 100*trivial_count/sum(counts));
+    fprintf('  Weakly Chaotic: %d (%.1f%%)\n', weakly_count, 100*weakly_count/sum(counts));
+    fprintf('  Strongly Chaotic: %d (%.1f%%)\n', strongly_count, 100*strongly_count/sum(counts));
+    fprintf('  Extremely Chaotic: %d (%.1f%%)\n', extremely_count, 100*extremely_count/sum(counts));
 end
 
 function data = read_lyapunov_csv(filename)
