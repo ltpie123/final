@@ -192,6 +192,8 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
 \section{Methods}
 
 \begin{frame}{Computational Approach}
+\begin{columns}
+\column{0.55\textwidth}
 \textbf{Tool Stack:}
 \begin{itemize}
     \item \texttt{ctrl/} - Rust trajectory analyzer
@@ -199,7 +201,7 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
     \item \texttt{disp/} - Octave/MATLAB visualization
 \end{itemize}
 
-\vspace{0.1em}
+\vspace{0.3em}
 
 \textbf{Systematic Testing:}
 \begin{enumerate}
@@ -209,12 +211,11 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
     \item Classify: regular/sensitive/chaotic
 \end{enumerate}
 
-\vspace{0.1em}
+\vspace{0.3em}
 
 \textbf{Puzzle:} 3×3×3×3 hypercube (Hyperspeedcube library)
 
-\vspace{0.1em}
-
+\column{0.45\textwidth}
 \begin{block}{Cycle Detection Algorithm}
 \tiny
 \vspace{-0.3em}
@@ -226,9 +227,10 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
     \State $\text{visited}[h] \gets n$
 \EndFor
 \end{algorithmic}
-\vspace{-0.7em}
+\vspace{-0.5em}
 \textbf{Complexity:} $O(p \cdot (T_M + H))$
 \end{block}
+\end{columns}
 \end{frame}
 
 \section{Results}
