@@ -80,60 +80,6 @@ OR & Outside → Right \\
 \end{columns}
 \end{frame}
 
-\begin{frame}{Puzzle Structure \& Symmetry}
-\begin{columns}
-\column{0.5\textwidth}
-\textbf{Piece Types (72 movable):}
-\begin{itemize}
-    \item \textbf{16 corners} (4-color pieces)
-    \begin{itemize}
-        \footnotesize
-        \item 12 orientations each
-    \end{itemize}
-    \item \textbf{32 faces} (3-color pieces)
-    \begin{itemize}
-        \footnotesize
-        \item 6 orientations each
-    \end{itemize}
-    \item \textbf{24 edges} (2-color pieces)
-    \begin{itemize}
-        \footnotesize
-        \item 2 orientations each
-    \end{itemize}
-\end{itemize}
-
-\vspace{0.5em}
-
-\textbf{Each quarter turn affects:}
-\begin{itemize}
-    \item 8 corners, 12 faces, 4 edges
-\end{itemize}
-
-\column{0.5\textwidth}
-\textbf{Symmetry Group:}
-
-The 4D tesseract has symmetry group $B_4$ (hyperoctahedral group):
-
-$$|B_4| = 2^4 \cdot 4! = 384$$
-
-\vspace{0.5em}
-
-\textbf{Structure:} $S_2 \wr S_4$ (wreath product)
-
-\vspace{0.5em}
-
-\textbf{Coxeter notation:} $[4,3,3]$
-
-\vspace{0.5em}
-
-\textbf{Rotational subgroup:} Order 192
-
-\vspace{1em}
-
-This rich group structure enables complex dynamics!
-\end{columns}
-\end{frame}
-
 \begin{frame}{Research Question}
 \begin{center}
 \Large
@@ -177,39 +123,7 @@ $$s_0 \xrightarrow{T_M} s_1 \xrightarrow{T_M} s_2 \xrightarrow{T_M} \cdots$$
 
 \vspace{1em}
 
-\begin{block}{Group-Theoretic View}
-Let $G$ be the puzzle group. Each move $m_i \in G$ is a bijection with $m_i^{-1} \circ m_i = \text{id}$.
-
-The sequence generates a cyclic subgroup:
-$$\langle T_M \rangle = \{T_M^0, T_M^1, \ldots, T_M^{p-1}\} \subseteq G$$
-where $|\langle T_M \rangle| = p$ (the period).
-\end{block}
-\end{frame}
-
-\begin{frame}{Permutation Theory \& Constraints}
-\textbf{State Representation:}
-
-Each configuration is a permutation + orientation:
-$$s = (\pi, o) \in S$$
-where $\pi$ permutes pieces, $o$ specifies orientations.
-
-\vspace{1em}
-
-\textbf{Parity Constraints:}
-\begin{enumerate}
-    \item \textbf{Corner parity}: 4c pieces must form \textit{even} permutations
-    $$\pi_{4c} \in A_{16} \subset S_{16}$$
-    
-    \item \textbf{Edge-Face parity}: Linked permutation parity
-    $$\text{sgn}(\pi_{2c}) = \text{sgn}(\pi_{3c})$$
-    
-    \item \textbf{Orientation sums}:
-    $$\sum_{i=1}^{31} o_{3c,i} \equiv 0 \pmod{3}, \quad \sum_{i=1}^{23} o_{2c,i} \equiv 0 \pmod{2}$$
-\end{enumerate}
-
-\vspace{0.5em}
-
-\textbf{Monoflip Invariant (unique to 4D):} A single 4c piece can be "flipped" with all others solved, related to $A_4$ orientation group.
+\textbf{Key Property:} Since $|S| < \infty$, every trajectory is eventually periodic.
 \end{frame}
 
 \begin{frame}{Lyapunov Exponents}
