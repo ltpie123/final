@@ -409,6 +409,14 @@ class LyapunovAnalyzer:
 
     def print_summary(self, results: List[LyapunovResult]):
         """Print formatted summary of results."""
+        if not results:
+            print("\n" + "="*70)
+            print("LYAPUNOV EXPONENT ANALYSIS SUMMARY")
+            print("="*70)
+            print("\nNo results to summarize!")
+            print("="*70)
+            return
+
         summary = self.generate_summary_report(results)
 
         print("\n" + "="*70)
