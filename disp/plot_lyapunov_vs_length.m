@@ -3,10 +3,11 @@
 % Reads lyapunov_data.csv from ../obsv/logs/ and creates scatter plot
 % showing how Lyapunov exponent varies with sequence length.
 %
-% Color-coded by classification:
-%   - Blue: regular (λ < 0.1)
-%   - Orange: sensitive (0.1 ≤ λ < ln(2))
-%   - Red: chaotic (λ ≥ ln(2))
+% Color-coded by classification (data-driven thresholds):
+%   - Gray: trivial (λ = 0, single moves)
+%   - Blue: weakly_chaotic (0 < λ < 2.0)
+%   - Orange: strongly_chaotic (2.0 ≤ λ < 4.0)
+%   - Red: extremely_chaotic (λ ≥ 4.0)
 
 function plot_lyapunov_vs_length(data_file, output_file)
     % Default paths
@@ -26,26 +27,28 @@ function plot_lyapunov_vs_length(data_file, output_file)
     grid on;
 
     % Plot by classification
-    colors = struct('regular', [0.2, 0.4, 0.8], ...
-                   'sensitive', [1.0, 0.6, 0.0], ...
-                   'chaotic', [0.9, 0.2, 0.2]);
+    colors = struct('trivial', [0.5, 0.5, 0.5], ...          % gray
+                   'weakly_chaotic', [0.2, 0.4, 0.8], ...    % blue
+                   'strongly_chaotic', [1.0, 0.6, 0.0], ...  % orange
+                   'extremely_chaotic', [0.9, 0.2, 0.2]);    % red
 
-    for cls = {'regular', 'sensitive', 'chaotic'}
+    for cls = {'trivial', 'weakly_chaotic', 'strongly_chaotic', 'extremely_chaotic'}
         cls_name = cls{1};
         mask = strcmp(data.classification, cls_name);
 
         if any(mask)
+            % Format label for legend
+            label = strrep(cls_name, '_', ' ');
             scatter(data.sequence_length(mask), data.lyapunov_exponent(mask), ...
-                   100, colors.(cls_name), 'filled', 'DisplayName', cls_name);
+                   100, colors.(cls_name), 'filled', 'DisplayName', label);
         end
     end
 
     % Add threshold lines
-    ln2 = log(2);
-    yline(ln2, '--r', 'LineWidth', 1.5, 'Alpha', 0.5, ...
-          'DisplayName', '\lambda = ln(2) (chaotic threshold)');
-    yline(0.1, '--', 'Color', [1.0, 0.6, 0.0], 'LineWidth', 1.5, ...
-          'Alpha', 0.5, 'DisplayName', '\lambda = 0.1 (sensitive threshold)');
+    yline(2.0, '--b', 'LineWidth', 1.5, 'Alpha', 0.5, ...
+          'DisplayName', '\lambda = 2.0 (weakly chaotic threshold)');
+    yline(4.0, '--r', 'LineWidth', 1.5, 'Alpha', 0.5, ...
+          'DisplayName', '\lambda = 4.0 (extremely chaotic threshold)');
 
     % Labels and title
     xlabel('Sequence Length', 'FontSize', 14, 'FontWeight', 'bold');
