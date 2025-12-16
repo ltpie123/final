@@ -51,10 +51,10 @@
     \item Rotations in 4D space
 \end{itemize}
 
-\vspace{0.5em}
+\vspace{0.3em}
 
 \begin{block}{State Space Formula}
-\footnotesize
+\tiny
 $$|S| = \frac{16!}{2} \cdot 12^{15} \cdot 4 \cdot 32! \cdot 6^{31} \cdot 3 \cdot \frac{24!}{2} \cdot 2^{23}$$
 \end{block}
 
@@ -143,16 +143,16 @@ Given base sequence $M$ with period $p$, perturb it to $M'$:
 Compute period $p'$ of perturbed sequence $M'$:
 $$\lambda = \frac{1}{N} \sum_{i=1}^{N} \ln\left|\frac{p'_i}{p}\right|$$
 
-\vspace{1em}
+\vspace{0.5em}
 
 \begin{block}{Discrete Lyapunov Exponent}
-\footnotesize
-Continuous systems: $\lambda = \lim_{t \to \infty} \frac{1}{t} \ln \frac{||\delta(t)||}{||\delta(0)||}$
+\scriptsize
+Continuous: $\lambda = \lim_{t \to \infty} \frac{1}{t} \ln \frac{||\delta(t)||}{||\delta(0)||}$
 
-Our adaptation: $\lambda_{\text{discrete}} = \mathbb{E}\left[\ln\left|\frac{p'}{p}\right|\right]$ measures sensitivity in sequence space
+Our adaptation: $\lambda_{\text{discrete}} = \mathbb{E}[\ln|p'/p|]$ measures sensitivity in sequence space
 \end{block}
 
-\vspace{1em}
+\vspace{0.5em}
 
 \textbf{Classification:}
 \begin{itemize}
@@ -183,9 +183,10 @@ Our adaptation: $\lambda_{\text{discrete}} = \mathbb{E}\left[\ln\left|\frac{p'}{
     \item Compute Lyapunov on period ratios
 \end{enumerate}
 
-\vspace{0.5em}
+\vspace{0.3em}
 
 \begin{block}{Key Insight}
+\small
 Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit structure) to small sequence perturbations, not trajectory divergence in state space.
 \end{block}
 \end{frame}
@@ -215,10 +216,10 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
 
 \textbf{Puzzle:} 3×3×3×3 hypercube (via Hyperspeedcube library)
 
-\vspace{1em}
+\vspace{0.5em}
 
 \begin{block}{Cycle Detection Algorithm}
-\footnotesize
+\tiny
 \begin{algorithmic}[1]
 \State $s \gets s_0$, $\text{visited} \gets \{h(s_0): 0\}$
 \For{$n = 1, 2, \ldots, N_{\max}$}
@@ -230,6 +231,7 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
     \State $\text{visited}[h] \gets n$
 \EndFor
 \end{algorithmic}
+\vspace{0.2em}
 \textbf{Complexity:} $O(p \cdot (T_M + H))$ where $p$ = period
 \end{block}
 \end{frame}
@@ -265,11 +267,12 @@ FR → UO & 2 & 840 & \textcolor{red}{2.81} \\
 
 \begin{frame}{Period vs Chaos}
 \begin{center}
-\includegraphics[width=0.75\textwidth]{../disp/figures/period_vs_lambda.png}
+\includegraphics[width=0.70\textwidth,height=0.65\textheight,keepaspectratio]{../disp/figures/period_vs_lambda.png}
 \end{center}
 
-\textbf{Key Insight:} Short periods $\ne$ simple behavior\\
-Highly chaotic sequences can have very short orbits!
+\vspace{-0.5em}
+
+\textbf{Key Insight:} Short periods $\ne$ simple behavior. Highly chaotic sequences can have very short orbits!
 \end{frame}
 
 \begin{frame}{Classification Distribution}
@@ -297,16 +300,20 @@ Highly chaotic sequences can have very short orbits!
 
 \begin{frame}{Top Chaotic Sequences}
 \begin{center}
-\includegraphics[width=0.85\textwidth]{../disp/figures/top_chaotic_sequences.png}
+\includegraphics[width=0.80\textwidth,height=0.70\textheight,keepaspectratio]{../disp/figures/top_chaotic_sequences.png}
 \end{center}
+
+\vspace{-0.5em}
 
 Self-compositions dominate the top rankings!
 \end{frame}
 
 \begin{frame}{Lyapunov vs Sequence Length}
 \begin{center}
-\includegraphics[width=0.75\textwidth]{../disp/figures/lyapunov_vs_length.png}
+\includegraphics[width=0.70\textwidth,height=0.65\textheight,keepaspectratio]{../disp/figures/lyapunov_vs_length.png}
 \end{center}
+
+\vspace{-0.5em}
 
 \textbf{Observation:} Highest chaos occurs at length 2 (self-compositions and pairs)
 \end{frame}
