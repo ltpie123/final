@@ -14,6 +14,7 @@ import numpy as np
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import random
 from dataclasses import dataclass
 
@@ -140,6 +141,116 @@ class LyapunovAnalyzer:
             classification=classification
         )
 
+    def compute_lyapunov_exponent_parallel(
+        self,
+        sequence: List[str],
+        n_perturbations: int = 10,
+        max_iterations: int = 50000,
+        perturbation_type: str = "substitute",
+        max_workers: int = 8
+    ) -> LyapunovResult:
+        """Compute discrete Lyapunov exponent with parallel perturbation testing.
+
+        Runs all perturbations in parallel for ~5-10x speedup depending on CPU cores.
+
+        Args:
+            sequence: Base move sequence
+            n_perturbations: Number of perturbations to test
+            max_iterations: Max iterations per trajectory
+            perturbation_type: Type of perturbation ('substitute', 'swap', 'insert', 'delete')
+            max_workers: Maximum parallel workers (default: 8)
+
+        Returns:
+            LyapunovResult with exponent and diagnostics
+        """
+        print(f"\nComputing Lyapunov exponent (PARALLEL) for: {' → '.join(sequence)}")
+
+        # Run base sequence (sequential)
+        print(f"  Base sequence...", end=" ", flush=True)
+        base_result = self.runner.run_sequence(sequence, max_iterations)
+        base_period = base_result['period']
+        print(f"period={base_period:,}")
+
+        # Generate all perturbations upfront
+        perturbations = [
+            self._perturb_sequence(sequence, perturbation_type)
+            for _ in range(n_perturbations)
+        ]
+
+        print(f"  Running {n_perturbations} perturbations in parallel (max_workers={max_workers})...")
+
+        # Run perturbations in parallel
+        period_ratios = []
+        divergence_scores = []
+        failed_count = 0
+        completed = 0
+
+        def run_perturbation(idx: int, pert_seq: List[str]) -> Tuple[int, int, Optional[int], Optional[str]]:
+            """Run single perturbation. Returns (idx, success, period, error_type)."""
+            try:
+                result = self.runner.run_sequence(pert_seq, max_iterations)
+                return (idx, 1, result['period'], None)
+            except (TimeoutError, RuntimeError, FileNotFoundError) as e:
+                return (idx, 0, None, type(e).__name__)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_idx = {
+                executor.submit(run_perturbation, i, pert): i
+                for i, pert in enumerate(perturbations)
+            }
+
+            # Collect results as they complete
+            for future in as_completed(future_to_idx):
+                idx, success, pert_period, error_type = future.result()
+                completed += 1
+
+                pert_seq = perturbations[idx]
+                print(f"    [{completed}/{n_perturbations}] {' → '.join(pert_seq)}: ", end="")
+
+                if success:
+                    # Compute ratio and divergence
+                    ratio = max(pert_period, base_period) / min(pert_period, base_period)
+                    divergence = abs(pert_period - base_period)
+
+                    period_ratios.append(ratio)
+                    divergence_scores.append(divergence)
+
+                    print(f"period={pert_period:,}, ratio={ratio:.2f}")
+                else:
+                    failed_count += 1
+                    print(f"FAILED ({error_type})")
+
+        if not period_ratios:
+            raise ValueError(f"All {n_perturbations} perturbations failed!")
+
+        if failed_count > 0:
+            print(f"  Note: {failed_count}/{n_perturbations} perturbations failed")
+
+        # Compute Lyapunov exponent
+        log_ratios = [np.log(r) for r in period_ratios]
+        lyapunov = np.mean(log_ratios)
+
+        # Classify behavior
+        if lyapunov > 0.69:  # log(2) ≈ 0.69
+            classification = "chaotic"
+        elif lyapunov > 0.1:
+            classification = "sensitive"
+        else:
+            classification = "regular"
+
+        print(f"  → Lyapunov exponent: λ = {lyapunov:.3f} ({classification})")
+
+        return LyapunovResult(
+            sequence=sequence,
+            base_period=base_period,
+            lyapunov_exponent=lyapunov,
+            perturbations_tested=len(period_ratios),
+            period_ratios=period_ratios,
+            divergence_scores=divergence_scores,
+            classification=classification
+        )
+
     def _perturb_sequence(
         self,
         sequence: List[str],
@@ -199,7 +310,9 @@ class LyapunovAnalyzer:
         sequences: List[List[str]],
         n_perturbations: int = 10,
         perturbation_type: str = "substitute",
-        save_results: bool = True
+        save_results: bool = True,
+        parallel: bool = False,
+        max_workers: int = 8
     ) -> List[LyapunovResult]:
         """Analyze multiple sequences.
 
@@ -208,23 +321,38 @@ class LyapunovAnalyzer:
             n_perturbations: Perturbations per sequence
             perturbation_type: Type of perturbation
             save_results: Save individual results to JSON
+            parallel: Use parallel execution for perturbations (default: False)
+            max_workers: Max parallel workers when parallel=True (default: 8)
 
         Returns:
             List of LyapunovResult objects
         """
         results = []
 
-        print(f"Analyzing {len(sequences)} sequences...")
+        mode = "PARALLEL" if parallel else "SEQUENTIAL"
+        print(f"Analyzing {len(sequences)} sequences ({mode} mode)...")
+
+        compute_fn = (self.compute_lyapunov_exponent_parallel if parallel
+                     else self.compute_lyapunov_exponent)
 
         for i, seq in enumerate(sequences, 1):
             print(f"\n[{i}/{len(sequences)}] " + "="*60)
 
             try:
-                result = self.compute_lyapunov_exponent(
-                    seq,
-                    n_perturbations=n_perturbations,
-                    perturbation_type=perturbation_type
-                )
+                if parallel:
+                    result = compute_fn(
+                        seq,
+                        n_perturbations=n_perturbations,
+                        perturbation_type=perturbation_type,
+                        max_workers=max_workers
+                    )
+                else:
+                    result = compute_fn(
+                        seq,
+                        n_perturbations=n_perturbations,
+                        perturbation_type=perturbation_type
+                    )
+
                 results.append(result)
 
                 if save_results:
@@ -483,6 +611,10 @@ def main():
                        help="Type of perturbation to apply")
     parser.add_argument("--max-sequences", type=int,
                        help="Maximum sequences to analyze from logs")
+    parser.add_argument("--parallel", action="store_true",
+                       help="Run perturbations in parallel for ~5-10x speedup")
+    parser.add_argument("--max-workers", type=int, default=8,
+                       help="Maximum parallel workers (default: 8)")
 
     args = parser.parse_args()
 
@@ -490,9 +622,28 @@ def main():
 
     if args.from_logs:
         # Analyze from existing logs
-        results = analyzer.analyze_from_logs(
+        sequences = []
+        json_files = list(analyzer.output_dir.glob("results_*.json"))
+        json_files = [f for f in json_files
+                     if "lyapunov" not in f.name and "random" not in f.name]
+        if args.max_sequences:
+            json_files = json_files[:args.max_sequences]
+        for json_file in json_files:
+            try:
+                with open(json_file) as f:
+                    data = json.load(f)
+                    seq = data.get('move_sequence', [])
+                    if seq:
+                        sequences.append(seq)
+            except Exception as e:
+                print(f"Warning: Could not load {json_file}: {e}")
+
+        print(f"Loaded {len(sequences)} sequences")
+        results = analyzer.analyze_sequence_batch(
+            sequences,
             n_perturbations=args.n_perturbations,
-            max_sequences=args.max_sequences
+            parallel=args.parallel,
+            max_workers=args.max_workers
         )
     elif args.sequences:
         # Analyze specific sequences
@@ -500,7 +651,9 @@ def main():
         results = analyzer.analyze_sequence_batch(
             sequences,
             n_perturbations=args.n_perturbations,
-            perturbation_type=args.perturbation_type
+            perturbation_type=args.perturbation_type,
+            parallel=args.parallel,
+            max_workers=args.max_workers
         )
     else:
         # Default: analyze a few interesting sequences
@@ -513,7 +666,9 @@ def main():
         ]
         results = analyzer.analyze_sequence_batch(
             sequences,
-            n_perturbations=args.n_perturbations
+            n_perturbations=args.n_perturbations,
+            parallel=args.parallel,
+            max_workers=args.max_workers
         )
 
     # Print summary
