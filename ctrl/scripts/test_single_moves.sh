@@ -2,7 +2,7 @@
 # Test individual move orders - Phase 1 & 2 of systematic exploration
 
 cd "$(dirname "$0")/.."
-mkdir -p logs
+mkdir -p ../obsv/logs
 
 echo "=== Testing Individual Move Orders ==="
 echo "Finding the period of each basic move applied repeatedly"
@@ -16,15 +16,15 @@ for move in $moves; do
         --puzzle ft_hypercube:3 \
         --moves "$move" \
         --max-iterations 20 \
-        --output "results_order_${move}.json" \
-        > "logs/order_${move}.log" 2>&1
+        --output "../obsv/logs/results_order_${move}.json" \
+        > "../obsv/logs/order_${move}.log" 2>&1
 
     # Extract summary from log
-    grep -A 12 "Dynamical Systems Summary" "logs/order_${move}.log"
+    grep -A 12 "Dynamical Systems Summary" "../obsv/logs/order_${move}.log"
     echo "---"
 done
 
 echo ""
 echo "=== Summary ==="
-echo "Results saved to results_order_*.json"
-echo "Logs saved to logs/order_*.log"
+echo "Results saved to obsv/logs/results_order_*.json"
+echo "Logs saved to obsv/logs/order_*.log"

@@ -2,7 +2,7 @@
 # Test theoretical predictions about move periods
 
 cd "$(dirname "$0")/.."
-mkdir -p logs
+mkdir -p ../obsv/logs
 
 echo "=== Testing Theoretical Predictions ==="
 echo ""
@@ -29,20 +29,20 @@ for pair_combo in "${test_pairs[@]}"; do
         --puzzle ft_hypercube:3 \
         --moves "$pair1" \
         --max-iterations 20000 \
-        --output "logs/results_order_test_$(echo $pair1 | tr ',' '_').json" \
-        > "logs/order_test_$(echo $pair1 | tr ',' '_').log" 2>&1
+        --output "../obsv/logs/results_order_test_$(echo $pair1 | tr ',' '_').json" \
+        > "../obsv/logs/order_test_$(echo $pair1 | tr ',' '_').log" 2>&1
 
     # Test second order
     cargo run --release -- \
         --puzzle ft_hypercube:3 \
         --moves "$pair2" \
         --max-iterations 20000 \
-        --output "logs/results_order_test_$(echo $pair2 | tr ',' '_').json" \
-        > "logs/order_test_$(echo $pair2 | tr ',' '_').log" 2>&1
+        --output "../obsv/logs/results_order_test_$(echo $pair2 | tr ',' '_').json" \
+        > "../obsv/logs/order_test_$(echo $pair2 | tr ',' '_').log" 2>&1
 
     # Compare
-    p1=$(python3 -c "import json; print(json.load(open('logs/results_order_test_$(echo $pair1 | tr ',' '_').json')).get('period', '?'))")
-    p2=$(python3 -c "import json; print(json.load(open('logs/results_order_test_$(echo $pair2 | tr ',' '_').json')).get('period', '?'))")
+    p1=$(python3 -c "import json; print(json.load(open('../obsv/logs/results_order_test_$(echo $pair1 | tr ',' '_').json')).get('period', '?'))")
+    p2=$(python3 -c "import json; print(json.load(open('../obsv/logs/results_order_test_$(echo $pair2 | tr ',' '_').json')).get('period', '?'))")
 
     if [ "$p1" = "$p2" ]; then
         echo "  ✓ Period($pair1) = Period($pair2) = $p1"
@@ -63,11 +63,11 @@ cargo run --release -- \
     --puzzle ft_hypercube:3 \
     --moves "FR',UF" \
     --max-iterations 20000 \
-    --output "logs/results_inverse_test_FRp_UF.json" \
-    > "logs/inverse_test_FRp_UF.log" 2>&1
+    --output "../obsv/logs/results_inverse_test_FRp_UF.json" \
+    > "../obsv/logs/inverse_test_FRp_UF.log" 2>&1
 
 p_normal=$(python3 -c "import json; print(json.load(open('results_2mov_FR_UF.json')).get('period', '?'))" 2>/dev/null || echo "?")
-p_inverse=$(python3 -c "import json; print(json.load(open('logs/results_inverse_test_FRp_UF.json')).get('period', '?'))")
+p_inverse=$(python3 -c "import json; print(json.load(open('../obsv/logs/results_inverse_test_FRp_UF.json')).get('period', '?'))")
 
 echo "  Period(FR,UF) = $p_normal"
 echo "  Period(FR',UF) = $p_inverse"
@@ -89,11 +89,11 @@ cargo run --release -- \
     --puzzle ft_hypercube:3 \
     --moves "FR,UF,FR,UF" \
     --max-iterations 20000 \
-    --output "logs/results_square_FRUF.json" \
-    > "logs/square_FRUF.log" 2>&1
+    --output "../obsv/logs/results_square_FRUF.json" \
+    > "../obsv/logs/square_FRUF.log" 2>&1
 
 p_base=$(python3 -c "import json; print(json.load(open('results_2mov_FR_UF.json')).get('period', '?'))" 2>/dev/null || echo "?")
-p_square=$(python3 -c "import json; print(json.load(open('logs/results_square_FRUF.json')).get('period', '?'))")
+p_square=$(python3 -c "import json; print(json.load(open('../obsv/logs/results_square_FRUF.json')).get('period', '?'))")
 
 echo "  Period(FR,UF) = $p_base"
 echo "  Period((FR,UF)^2) = $p_square"

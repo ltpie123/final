@@ -2,7 +2,7 @@
 # Test commutators [A,B] = A,B,A',B' - Phase 3 of systematic exploration
 
 cd "$(dirname "$0")/.."
-mkdir -p logs
+mkdir -p ../obsv/logs
 
 echo "=== Commutator Analysis ==="
 echo "Testing if key move pairs commute"
@@ -29,11 +29,11 @@ for pair in "${pairs[@]}"; do
         --puzzle ft_hypercube:3 \
         --moves "$m1,$m2,${m1}',${m2}'" \
         --max-iterations 10000 \
-        --output "results_comm_${m1}_${m2}.json" \
-        > "logs/comm_${m1}_${m2}.log" 2>&1
+        --output "../obsv/logs/results_comm_${m1}_${m2}.json" \
+        > "../obsv/logs/comm_${m1}_${m2}.log" 2>&1
 
     # Extract summary from log
-    grep -A 8 "Dynamical Systems Summary" "logs/comm_${m1}_${m2}.log"
+    grep -A 8 "Dynamical Systems Summary" "../obsv/logs/comm_${m1}_${m2}.log"
     echo "---"
 done
 

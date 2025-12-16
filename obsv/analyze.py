@@ -28,7 +28,8 @@ def prime_factorization(n):
 def analyze_results():
     """Analyze all JSON result files"""
 
-    results_dir = Path(__file__).parent.parent
+    # Look in obsv/logs/ directory
+    results_dir = Path(__file__).parent / "logs"
     json_files = list(results_dir.glob("results_*.json"))
 
     if not json_files:

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generate a comprehensive summary report
 
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")"
 
 OUTPUT="ANALYSIS_REPORT.md"
 
@@ -18,7 +18,7 @@ HEADER
 
 echo "## Quick Statistics" >> "$OUTPUT"
 echo "" >> "$OUTPUT"
-python3 scripts/quick_analysis.py >> "$OUTPUT"
+python3 analyze.py >> "$OUTPUT"
 
 echo "" >> "$OUTPUT"
 echo "---" >> "$OUTPUT"
@@ -29,7 +29,7 @@ echo "| Period | Length | Move Sequence | States | Time (s) |" >> "$OUTPUT"
 echo "|--------|--------|---------------|--------|----------|" >> "$OUTPUT"
 
 # Sort all results by period
-for file in results_*.json; do
+for file in logs/results_*.json; do
     [ -f "$file" ] || continue
     python3 -c "
 import json, sys
