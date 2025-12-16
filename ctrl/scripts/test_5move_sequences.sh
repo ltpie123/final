@@ -2,7 +2,7 @@
 # Test 5-move sequences attempting to beat current record (41,496)
 
 cd "$(dirname "$0")/.."
-mkdir -p logs
+mkdir -p ../obsv/logs
 
 echo "=== Testing 5-Move Sequences ==="
 echo "Current record: 41,496 (FR,UF,OR,RO)"
@@ -32,8 +32,8 @@ for seq in "${sequences[@]}"; do
         --puzzle ft_hypercube:3 \
         --moves "$seq" \
         --max-iterations 100000 \
-        --output "logs/results_5mov_${seq_name}.json" \
-        > "logs/5mov_${seq_name}.log" 2>&1 &
+        --output "../obsv/logs/results_5mov_${seq_name}.json" \
+        > "../obsv/logs/5mov_${seq_name}.log" 2>&1 &
 
     # Limit parallel jobs
     if [ $(jobs -r | wc -l) -ge 4 ]; then
@@ -47,7 +47,7 @@ echo ""
 echo "=== Results ==="
 for seq in "${sequences[@]}"; do
     seq_name=$(echo "$seq" | tr ',' '_')
-    file="logs/results_5mov_${seq_name}.json"
+    file="../obsv/logs/results_5mov_${seq_name}.json"
 
     if [ -f "$file" ]; then
         period=$(python3 -c "import json; print(json.load(open('$file')).get('period', 'N/A'))" 2>/dev/null)

@@ -10,7 +10,7 @@ echo ""
 # Representative move set (8 moves covering different dimensional subspaces)
 moves=(FR UF OR UO RL FU OL UD)
 
-mkdir -p logs
+mkdir -p ../obsv/logs
 
 total_tests=$((${#moves[@]} * ${#moves[@]}))
 completed=0
@@ -25,7 +25,7 @@ for m1 in "${moves[@]}"; do
             --moves "$m1,$m2" \
             --max-iterations 50000 \
             --output "results_2mov_${m1}_${m2}.json" \
-            > "logs/${m1}_${m2}.log" 2>&1 &
+            > "../obsv/logs/${m1}_${m2}.log" 2>&1 &
 
         # Limit to 4 parallel jobs to avoid overwhelming the system
         if [ $(jobs -r | wc -l) -ge 4 ]; then
