@@ -1,11 +1,13 @@
 # Orbit Exploration Tool for Hyperspeedcube (4D Rubik's Cube)
 
 ## Goal
+
 Create a Rust-based orbit exploration tool to analyze move sequences (like RU combinations) on a 3x3x3x3 (4D Rubik's cube) for a math class project.
 
 ## Approach: Rust Binary Using Hyperspeedcube as Library
 
 ### Why Rust over Python?
+
 - **Faster development**: Writing Rust code using the existing library is faster than creating Python bindings
 - **Performance critical**: 4D cube state spaces are enormous; Rust's speed is essential
 - **Simple integration**: Hyperspeedcube's crates are designed to be used as libraries
@@ -14,11 +16,13 @@ Create a Rust-based orbit exploration tool to analyze move sequences (like RU co
 ## Implementation Plan
 
 ### 1. Create Rust workspace in `ctrl/` directory
+
 - **File**: `ctrl/Cargo.toml`
   - Create workspace with dependency on `../hyper/Hyperspeedcube/crates/hyperpuzzle`
   - Add dependencies: `serde`, `serde_json` for exports, `clap` for CLI args
 
 ### 2. Create main orbit exploration binary
+
 - **File**: `ctrl/src/main.rs`
   - Load 3x3x3x3 puzzle from catalog: `catalog().build_puzzle_blocking("ft_tesseract:3")`
   - Implement orbit generation using BFS:
@@ -30,6 +34,7 @@ Create a Rust-based orbit exploration tool to analyze move sequences (like RU co
   - Export results to JSON files
 
 ### 3. State representation and tracking
+
 - **File**: `ctrl/src/orbit.rs`
   - Wrapper around `BoxDynPuzzleState` for hashing/equality
   - BFS/DFS exploration logic
@@ -37,12 +42,14 @@ Create a Rust-based orbit exploration tool to analyze move sequences (like RU co
   - Orbit graph structure (nodes = states, edges = moves)
 
 ### 4. Output formats
+
 - **File**: `ctrl/src/export.rs`
   - JSON export: orbit graph with nodes (state IDs) and edges (move labels)
   - CSV export: statistics (orbit size, max depth, state counts by depth)
   - DOT format: for Graphviz visualization (optional, for small orbits)
 
 ### 5. CLI interface
+
 - Parse arguments:
   - Puzzle spec (default: "ft_tesseract:3")
   - Move set (default: ["R", "U"])
@@ -53,12 +60,14 @@ Create a Rust-based orbit exploration tool to analyze move sequences (like RU co
 ## Critical Files from Hyperspeedcube
 
 ### Core API to use:
+
 - `hyper/Hyperspeedcube/crates/hyperpuzzle/src/lib.rs` - Loading puzzles
 - `hyper/Hyperspeedcube/crates/hyperpuzzle_core/src/traits/state.rs` - `PuzzleState::do_twist()`
 - `hyper/Hyperspeedcube/crates/hyperpuzzle_core/src/puzzle/twist.rs` - `LayeredTwist` struct
 - `hyper/Hyperspeedcube/crates/hyperpuzzle_core/src/puzzle/dev_data/orbits.rs` - Existing orbit types (for reference)
 
 ### Key structs/traits:
+
 - `Puzzle` - puzzle type definition
 - `BoxDynPuzzleState` - puzzle state instance
 - `LayeredTwist` - represents a move (axis + layers + transform)
@@ -94,6 +103,7 @@ cargo run --release -- \
 ## Phase 1: Initial Implementation TODO
 
 ### Must Have (MVP)
+
 - [ ] Set up Rust workspace in `ctrl/` with Hyperspeedcube dependency
 - [ ] Load 3x3x3x3 puzzle from catalog
 - [ ] Parse move notation (convert "R", "U" strings to LayeredTwist)
@@ -104,12 +114,14 @@ cargo run --release -- \
 - [ ] Test with small move set (depth limit ~5-6 initially)
 
 ### Nice to Have (Phase 1)
+
 - [ ] Progress bar / status updates during search
 - [ ] CSV export for state counts by depth
 - [ ] Handle puzzle load errors gracefully
 - [ ] Add time elapsed tracking
 
 ### Deferred to Phase 2
+
 - [ ] Graph export (full transition graph)
 - [ ] DOT format for visualization
 - [ ] Parallel processing optimization
@@ -122,6 +134,7 @@ cargo run --release -- \
 After Phase 1 is working and bugs are resolved, we'll add:
 
 ### 2.1 Performance Optimization
+
 - **File**: `ctrl/src/orbit.rs`
   - Implement parallel BFS using `rayon`
   - Add state canonicalization (reduce equivalent states under symmetry)
@@ -129,6 +142,7 @@ After Phase 1 is working and bugs are resolved, we'll add:
   - Benchmark different hash algorithms
 
 ### 2.2 Enhanced Exports
+
 - **File**: `ctrl/src/export.rs`
   - Full orbit graph export (JSON with state IDs + edges)
   - DOT format generation for Graphviz
@@ -136,6 +150,7 @@ After Phase 1 is working and bugs are resolved, we'll add:
   - SQLite database export for large orbits
 
 ### 2.3 Visualization Integration
+
 - **Directory**: `disp/` (Python scripts)
   - Read JSON outputs from `ctrl/`
   - Generate orbit graphs using networkx + matplotlib
@@ -144,6 +159,7 @@ After Phase 1 is working and bugs are resolved, we'll add:
   - Statistics dashboards
 
 ### 2.4 Advanced Analysis
+
 - **File**: `ctrl/src/analysis.rs`
   - Orbit decomposition (find sub-orbits)
   - Compute stabilizer subgroups
@@ -152,6 +168,7 @@ After Phase 1 is working and bugs are resolved, we'll add:
   - Detect interesting patterns/symmetries
 
 ### 2.5 Documentation and Report Generation
+
 - **File**: `report/` (LaTeX or Markdown)
   - Auto-generate sections from computed results
   - Include orbit statistics tables
