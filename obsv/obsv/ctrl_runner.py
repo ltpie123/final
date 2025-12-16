@@ -28,7 +28,8 @@ class CtrlRunner:
         self,
         moves: List[str],
         max_iterations: int = 100000,
-        output_file: Optional[Path] = None
+        output_file: Optional[Path] = None,
+        timeout: int = 120
     ) -> Dict:
         """Run a move sequence and return results.
 
@@ -36,13 +37,22 @@ class CtrlRunner:
             moves: List of move notations (e.g., ["FR", "UF", "OR"])
             max_iterations: Maximum iterations before giving up
             output_file: Optional path to save JSON results
+            timeout: Timeout in seconds for the CTRL process (default: 120)
 
         Returns:
             Dictionary containing period, states visited, time, etc.
+
+        Raises:
+            RuntimeError: If CTRL execution fails
+            TimeoutError: If execution exceeds timeout
+            FileNotFoundError: If output file is not created
         """
         # Default output to logs/temp_result.json
         if output_file is None:
             output_file = self.ctrl_path.parent / "obsv" / "logs" / "temp_result.json"
+
+        # Ensure output directory exists
+        output_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Build command
         moves_str = ",".join(moves)
@@ -54,20 +64,32 @@ class CtrlRunner:
             "--output", str(output_file)
         ]
 
-        # Run in ctrl directory
-        result = subprocess.run(
-            cmd,
-            cwd=self.ctrl_path,
-            capture_output=True,
-            text=True
-        )
+        # Run in ctrl directory with timeout
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=self.ctrl_path,
+                capture_output=True,
+                text=True,
+                timeout=timeout
+            )
+        except subprocess.TimeoutExpired:
+            raise TimeoutError(f"CTRL execution timed out after {timeout}s for sequence: {moves}")
 
         if result.returncode != 0:
-            raise RuntimeError(f"CTRL failed: {result.stderr}")
+            error_msg = result.stderr.strip() if result.stderr else "Unknown error"
+            raise RuntimeError(f"CTRL failed for sequence {moves}: {error_msg}")
+
+        # Check if output file was created
+        if not output_file.exists():
+            raise FileNotFoundError(f"CTRL did not create output file: {output_file}")
 
         # Load and return results
-        with open(output_file) as f:
-            return json.load(f)
+        try:
+            with open(output_file) as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            raise RuntimeError(f"Invalid JSON in output file {output_file}: {e}")
 
 
 class MoveGenerator:

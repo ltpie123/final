@@ -83,6 +83,7 @@ class LyapunovAnalyzer:
         # Generate and test perturbations
         period_ratios = []
         divergence_scores = []
+        failed_count = 0
 
         for i in range(n_perturbations):
             perturbed = self._perturb_sequence(sequence, perturbation_type)
@@ -103,12 +104,17 @@ class LyapunovAnalyzer:
 
                 print(f"period={pert_period:,}, ratio={ratio:.2f}")
 
-            except Exception as e:
-                print(f"FAILED: {e}")
+            except (TimeoutError, RuntimeError, FileNotFoundError) as e:
+                failed_count += 1
+                error_type = type(e).__name__
+                print(f"FAILED ({error_type})")
                 continue
 
         if not period_ratios:
-            raise ValueError("All perturbations failed!")
+            raise ValueError(f"All {n_perturbations} perturbations failed!")
+
+        if failed_count > 0:
+            print(f"  Note: {failed_count}/{n_perturbations} perturbations failed")
 
         # Compute Lyapunov exponent: λ = (1/n) Σ log(ratio)
         log_ratios = [np.log(r) for r in period_ratios]
