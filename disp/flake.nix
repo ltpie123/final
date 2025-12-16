@@ -29,12 +29,11 @@
 
           buildInputs = with pkgs; [
             xorg.libxcb
-            xorg.libxkbcommon
+            libxkbcommon
             xorg.libX11
             libGL
             wayland
             wayland-protocols
-            libxkbcommon
           ];
 
           # Set library path for runtime
@@ -42,11 +41,10 @@
             wrapProgram $out/bin/hyperspeedcube \
               --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath [
                 pkgs.xorg.libxcb
-                pkgs.xorg.libxkbcommon
+                pkgs.libxkbcommon
                 pkgs.xorg.libX11
                 pkgs.libGL
                 pkgs.wayland
-                pkgs.libxkbcommon
               ]}
           '';
         };
@@ -73,11 +71,10 @@
 
             # X11 runtime dependencies
             xorg.libxcb
-            xorg.libxkbcommon
+            libxkbcommon
             xorg.libX11
             libGL
             wayland
-            libxkbcommon
 
             # Python for scripting
             python3
@@ -105,11 +102,10 @@
 
             export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
               pkgs.xorg.libxcb
-              pkgs.xorg.libxkbcommon
+              pkgs.libxkbcommon
               pkgs.xorg.libX11
               pkgs.libGL
               pkgs.wayland
-              pkgs.libxkbcommon
             ]}:$LD_LIBRARY_PATH"
           '';
         };
