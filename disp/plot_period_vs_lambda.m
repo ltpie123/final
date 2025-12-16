@@ -22,27 +22,31 @@ function plot_period_vs_lambda(data_file, output_file)
     grid on;
 
     % Plot by classification
-    colors = struct('regular', [0.2, 0.4, 0.8], ...
-                   'sensitive', [1.0, 0.6, 0.0], ...
-                   'chaotic', [0.9, 0.2, 0.2]);
+    colors = struct('trivial', [0.5, 0.5, 0.5], ...          % gray
+                   'weakly_chaotic', [0.2, 0.4, 0.8], ...    % blue
+                   'strongly_chaotic', [1.0, 0.6, 0.0], ...  % orange
+                   'extremely_chaotic', [0.9, 0.2, 0.2]);    % red
 
-    for cls = {'regular', 'sensitive', 'chaotic'}
+    for cls = {'trivial', 'weakly_chaotic', 'strongly_chaotic', 'extremely_chaotic'}
         cls_name = cls{1};
         mask = strcmp(data.classification, cls_name);
 
         if any(mask)
+            label = strrep(cls_name, '_', ' ');
             scatter(data.base_period(mask), data.lyapunov_exponent(mask), ...
-                   100, colors.(cls_name), 'filled', 'DisplayName', cls_name);
+                   100, colors.(cls_name), 'filled', 'DisplayName', label);
         end
     end
 
     % Log scale for x-axis
     set(gca, 'XScale', 'log');
 
-    % Add threshold line
-    ln2 = log(2);
-    yline(ln2, '--r', 'LineWidth', 1.5, 'Alpha', 0.5, ...
-          'DisplayName', '\lambda = ln(2)');
+    % Add threshold lines (Octave-compatible)
+    xlims = xlim();
+    plot(xlims, [2.0, 2.0], '--b', 'LineWidth', 1.5, ...
+         'DisplayName', '\lambda = 2.0');
+    plot(xlims, [4.0, 4.0], '--r', 'LineWidth', 1.5, ...
+         'DisplayName', '\lambda = 4.0');
 
     % Labels and title
     xlabel('Base Period (log scale)', 'FontSize', 14, 'FontWeight', 'bold');

@@ -30,9 +30,10 @@ function plot_top_sequences(data_file, output_file, top_n)
 
     % Assign colors based on classification
     colors = zeros(n, 3);
-    color_map = struct('regular', [0.2, 0.4, 0.8], ...
-                      'sensitive', [1.0, 0.6, 0.0], ...
-                      'chaotic', [0.9, 0.2, 0.2]);
+    color_map = struct('trivial', [0.5, 0.5, 0.5], ...          % gray
+                      'weakly_chaotic', [0.2, 0.4, 0.8], ...    % blue
+                      'strongly_chaotic', [1.0, 0.6, 0.0], ...  % orange
+                      'extremely_chaotic', [0.9, 0.2, 0.2]);    % red
 
     for i = 1:n
         cls = top_classifications{i};
@@ -49,10 +50,12 @@ function plot_top_sequences(data_file, output_file, top_n)
         barh(y_pos(i), top_lambdas(i), 'FaceColor', colors(i,:), 'EdgeColor', 'k');
     end
 
-    % Add threshold line
-    ln2 = log(2);
-    xline(ln2, '--r', 'LineWidth', 2, 'Alpha', 0.5);
-    text(ln2 + 0.05, n*0.95, 'ln(2) threshold', 'FontSize', 11, 'Color', 'r');
+    % Add threshold lines (Octave-compatible)
+    ylims = ylim();
+    plot([2.0, 2.0], ylims, '--b', 'LineWidth', 1.5);
+    plot([4.0, 4.0], ylims, '--r', 'LineWidth', 1.5);
+    text(2.1, n*0.1, '\lambda=2.0', 'FontSize', 10, 'Color', 'b');
+    text(4.1, n*0.1, '\lambda=4.0', 'FontSize', 10, 'Color', 'r');
 
     % Labels and formatting
     set(gca, 'YTick', y_pos);

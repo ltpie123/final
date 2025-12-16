@@ -44,11 +44,12 @@ function plot_lyapunov_vs_length(data_file, output_file)
         end
     end
 
-    % Add threshold lines
-    yline(2.0, '--b', 'LineWidth', 1.5, 'Alpha', 0.5, ...
-          'DisplayName', '\lambda = 2.0 (weakly chaotic threshold)');
-    yline(4.0, '--r', 'LineWidth', 1.5, 'Alpha', 0.5, ...
-          'DisplayName', '\lambda = 4.0 (extremely chaotic threshold)');
+    % Add threshold lines (Octave-compatible)
+    xlims = xlim();
+    plot(xlims, [2.0, 2.0], '--b', 'LineWidth', 1.5, ...
+         'DisplayName', '\lambda = 2.0 (weakly chaotic threshold)');
+    plot(xlims, [4.0, 4.0], '--r', 'LineWidth', 1.5, ...
+         'DisplayName', '\lambda = 4.0 (extremely chaotic threshold)');
 
     % Labels and title
     xlabel('Sequence Length', 'FontSize', 14, 'FontWeight', 'bold');
