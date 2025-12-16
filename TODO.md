@@ -207,6 +207,7 @@ After Phase 1 is working and bugs are resolved, we'll add:
 ### Output Format
 
 Each run should produce:
+
 ```json
 {
   "puzzle_id": "ft_hypercube:3",

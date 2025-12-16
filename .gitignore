@@ -8,6 +8,7 @@
 *.json
 *.csv
 *.dot
+ctrl/logs/
 
 # IDE / Editor
 .vscode/
