@@ -1,0 +1,86 @@
+# Sequences to Record for Visualization
+#
+# Priority sequences based on Lyapunov analysis
+# Record these in Hyperspeedcube and convert to GIF
+
+## High Priority (Most Chaotic - High λ)
+
+[ ] FR → UF
+    Period: 10,080
+    Classification: Chaotic
+    Notes: High Lyapunov exponent, very sensitive to perturbations
+    Output: figures/sequence_FR_UF.gif
+
+[ ] FR → UF → OR
+    Period: 2,160
+    Classification: Chaotic/Sensitive
+    Notes: Medium complexity, good for comparison
+    Output: figures/sequence_FR_UF_OR.gif
+
+[ ] FR → UF → OR → RO
+    Period: 41,496 (RECORD!)
+    Classification: Highly chaotic
+    Notes: Longest period found, extremely chaotic
+    Output: figures/sequence_FR_UF_OR_RO.gif
+
+## Comparison (Regular Behavior - Low λ)
+
+[ ] OF → OU
+    Period: 6
+    Classification: Regular
+    Notes: Very simple, predictable behavior
+    Output: figures/sequence_OF_OU.gif
+
+[ ] FR (single move)
+    Period: 4
+    Classification: Regular
+    Notes: Baseline - simplest possible sequence
+    Output: figures/sequence_FR.gif
+
+## Optional (Interesting Patterns)
+
+[ ] OR → OU
+    Period: 12
+    Notes: Simple but interesting 4D rotation pattern
+    Output: figures/sequence_OR_OU.gif
+
+[ ] UF → OU
+    Period: varies
+    Notes: Another baseline sequence
+    Output: figures/sequence_UF_OU.gif
+
+## Recording Checklist
+
+Before recording each sequence:
+1. [ ] Hyperspeedcube puzzle reset to solved (Ctrl+R)
+2. [ ] Camera angle set to good 4D view
+3. [ ] Animation speed slowed (0.25x or 0.5x recommended)
+4. [ ] High contrast stickers enabled
+5. [ ] Screen recorder ready (SimpleScreenRecorder/OBS)
+
+After recording:
+1. [ ] Video saved with descriptive name
+2. [ ] Convert to GIF: ./scripts/video_to_gif.sh input.mp4 output.gif
+3. [ ] Check GIF size (< 5MB preferred)
+4. [ ] Move to figures/ directory
+5. [ ] Update progress in this file
+
+## Conversion Commands
+
+```bash
+# Standard conversion
+./scripts/video_to_gif.sh recording_FR_UF.mp4 figures/sequence_FR_UF.gif
+
+# Higher quality (larger file)
+./scripts/video_to_gif.sh recording.mp4 output.gif 640 20
+
+# Smaller file (lower quality)
+./scripts/video_to_gif.sh recording.mp4 output.gif 320 10
+```
+
+## Notes
+
+- Record 2-3 full periods for periodic sequences
+- For chaotic sequences (long periods), show ~5-10 moves
+- Keep GIFs under 5MB for easy report inclusion
+- Use descriptive filenames matching sequence notation

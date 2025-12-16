@@ -18,7 +18,13 @@ disp/
 ├── plot_period_vs_lambda.m         # Period vs lambda (log scale)
 ├── plot_classification_pie.m       # Behavioral classification pie chart
 ├── plot_top_sequences.m            # Top N most chaotic sequences bar chart
-├── figures/                        # Output directory for generated figures
+├── scripts/
+│   ├── video_to_gif.sh            # Convert screen recordings to GIF
+│   └── sequences_to_record.txt    # Checklist of sequences to visualize
+├── figures/                        # Output directory for all figures
+│   ├── *.png                      # Octave-generated plots
+│   └── sequence_*.gif             # Hyperspeedcube visualizations
+├── VISUALIZATION_GUIDE.md          # Guide for creating sequence GIFs
 └── README.md                       # This file
 ```
 
@@ -261,3 +267,125 @@ $$\lambda(S) = \frac{1}{n} \sum_{i=1}^{n} \log\left|\frac{\text{Period}(S_i^\tex
 - **λ ≈ 0**: Regular behavior (stable under perturbations)
 
 See `docs/mathematical_framework.md` Section 10.1 for detailed theory.
+
+---
+
+## Hyperspeedcube Visualizations
+
+In addition to statistical plots, we create animated GIFs of actual 4D hypercube sequences using Hyperspeedcube.
+
+### Quick Start
+
+1. **Read the guide**:
+   ```bash
+   cat VISUALIZATION_GUIDE.md
+   ```
+
+2. **Check the recording checklist**:
+   ```bash
+   cat scripts/sequences_to_record.txt
+   ```
+
+3. **Launch Hyperspeedcube**:
+   ```bash
+   cd ../hyper/Hyperspeedcube
+   cargo build --release
+   ./target/release/hyperspeedcube
+   ```
+
+4. **Record sequences** (see guide for details):
+   - Set up 3^4 puzzle
+   - Start screen recording
+   - Perform move sequence
+   - Stop recording
+
+5. **Convert to GIF**:
+   ```bash
+   cd ../../disp
+   ./scripts/video_to_gif.sh ~/Videos/recording.mp4 figures/sequence_FR_UF.gif
+   ```
+
+### Priority Sequences
+
+Based on Lyapunov analysis, these sequences are most important to visualize:
+
+| Sequence | Period | λ | Priority | Notes |
+|----------|---------|---|----------|-------|
+| FR → UF | 10,080 | High | ⭐⭐⭐ | Very chaotic |
+| FR → UF → OR | 2,160 | Medium | ⭐⭐⭐ | Good comparison |
+| FR → UF → OR → RO | 41,496 | Very High | ⭐⭐⭐ | RECORD! |
+| OF → OU | 6 | Low | ⭐⭐ | Regular (baseline) |
+| FR | 4 | Very Low | ⭐ | Single move baseline |
+
+### GIF Specifications
+
+- **Resolution**: 480px width (scaled from 1080p recording)
+- **Framerate**: 15 fps
+- **Size**: < 5MB per GIF
+- **Duration**: 2-3 full periods (or ~10 moves for long sequences)
+- **Format**: Optimized GIF with 256 colors
+
+### Video to GIF Conversion
+
+Our helper script handles all optimization automatically:
+
+```bash
+# Standard conversion
+./scripts/video_to_gif.sh input.mp4 output.gif
+
+# High quality (larger file)
+./scripts/video_to_gif.sh input.mp4 output.gif 640 20
+
+# Small file (for email/web)
+./scripts/video_to_gif.sh input.mp4 output.gif 320 10
+```
+
+### Recording Tips
+
+- **Slow down animation**: Settings > Animation Speed → 0.25x or 0.5x
+- **Use high contrast**: Settings > Stickers > High Contrast
+- **Good 4D projection**: Use "Schlegel" or "Stereographic" view
+- **Start from solved**: Always reset puzzle (Ctrl+R) before recording
+- **Solid background**: White or black background recommended
+
+### Integration with Report
+
+Include GIFs in LaTeX using `animate` package:
+
+```latex
+\usepackage{animate}
+
+\begin{figure}[h]
+    \centering
+    \animategraphics[width=0.6\textwidth,autoplay,loop]{15}{figures/sequence_FR_UF}{}{}
+    \caption{FR → UF sequence showing period of 10,080}
+\end{figure}
+```
+
+Or as static images in Markdown/LaTeX:
+
+```markdown
+![FR → UF sequence](figures/sequence_FR_UF.gif)
+```
+
+```latex
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/sequence_FR_UF.gif}
+    \caption{FR → UF sequence}
+\end{figure}
+```
+
+### Tools Required
+
+- **Hyperspeedcube**: `../hyper/Hyperspeedcube` (Rust build)
+- **Screen recorder**: SimpleScreenRecorder (Linux), OBS (cross-platform), or built-in tools
+- **FFmpeg**: For video → GIF conversion
+- **Gifsicle**: For GIF optimization
+
+Install on Arch Linux:
+```bash
+sudo pacman -S simplescreenrecorder ffmpeg gifsicle
+```
+
+See `VISUALIZATION_GUIDE.md` for detailed instructions and troubleshooting.
