@@ -10,51 +10,12 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-
-        # Build Hyperspeedcube with all X11 dependencies
-        hyperspeedcube = pkgs.rustPlatform.buildRustPackage rec {
-          pname = "hyperspeedcube";
-          version = "0.4.0";
-
-          src = ../hyper/Hyperspeedcube;
-
-          cargoLock = {
-            lockFile = ../hyper/Hyperspeedcube/Cargo.lock;
-          };
-
-          nativeBuildInputs = with pkgs; [
-            pkg-config
-            cmake
-          ];
-
-          buildInputs = with pkgs; [
-            xorg.libxcb
-            libxkbcommon
-            xorg.libX11
-            libGL
-            wayland
-            wayland-protocols
-          ];
-
-          # Set library path for runtime
-          postInstall = ''
-            wrapProgram $out/bin/hyperspeedcube \
-              --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath [
-                pkgs.xorg.libxcb
-                pkgs.libxkbcommon
-                pkgs.xorg.libX11
-                pkgs.libGL
-                pkgs.wayland
-              ]}
-          '';
-        };
-
       in {
         # Development shell with all tools
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # Hyperspeedcube (built above)
-            hyperspeedcube
+            # NOTE: Hyperspeedcube assumed to be installed separately
+            # (building from source requires Cargo.lock from ../hyper/)
 
             # Automation tools
             xdotool
@@ -109,9 +70,6 @@
             ]}:$LD_LIBRARY_PATH"
           '';
         };
-
-        # Package output
-        packages.default = hyperspeedcube;
       }
     );
 }

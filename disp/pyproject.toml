@@ -1,0 +1,9 @@
+[project]
+name = "disp"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "pyautogui>=0.9.54",
+    "python3-xlib>=0.15",
+]

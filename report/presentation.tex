@@ -1,0 +1,379 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{hyperref}
+
+\title{Chaos in Hyperdimensional Rubik's Cubes}
+\subtitle{Discrete Dynamical Systems on 4D Puzzles}
+\author{Math 538 Final Project}
+\date{\today}
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+\titlepage
+\end{frame}
+
+% Outline
+\begin{frame}{Overview}
+\tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{What is a 4D Rubik's Cube?}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{3D Rubik's Cube:}
+\begin{itemize}
+    \item 3×3×3 puzzle
+    \item 6 faces (F, U, R, L, B, D)
+    \item $\sim 4.3 \times 10^{19}$ states
+    \item Rotations in 3D space
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{4D Hypercube:}
+\begin{itemize}
+    \item 3×3×3×3 puzzle
+    \item \textcolor{red}{8 cells} (3D "faces")
+    \item State space exponentially larger
+    \item Rotations in 4D space
+\end{itemize}
+
+\column{0.5\textwidth}
+\centering
+\textbf{New moves:}
+
+\vspace{0.5em}
+
+\begin{tabular}{ll}
+\toprule
+\textbf{Move} & \textbf{Meaning} \\
+\midrule
+FR & Front → Right \\
+UO & Up → Outside \\
+OR & Outside → Right \\
+\bottomrule
+\end{tabular}
+
+\vspace{1em}
+
+\textit{Two-letter notation for 4D rotations}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Research Question}
+\begin{center}
+\Large
+\textcolor{blue}{How do repeated move sequences behave\\on a 4D hypercube?}
+
+\vspace{2em}
+
+\normalsize
+\textbf{Key Concepts:}
+\begin{itemize}
+    \item \textbf{Orbit/Period}: Iterations to return to solved state
+    \item \textbf{Chaos}: Sensitivity to perturbations (Lyapunov exponent)
+    \item \textbf{Discrete Dynamics}: Iterating deterministic maps
+\end{itemize}
+\end{center}
+\end{frame}
+
+\section{Mathematical Framework}
+
+\begin{frame}{Discrete Dynamical System}
+\textbf{State Space:} $S$ = all possible puzzle configurations
+
+\vspace{1em}
+
+\textbf{Move Sequence:} $M = (m_1, m_2, \ldots, m_k)$
+
+\vspace{1em}
+
+\textbf{Composite Map:}
+$$T_M: S \to S$$
+$$T_M(s) = m_k \circ m_{k-1} \circ \cdots \circ m_1(s)$$
+
+\vspace{1em}
+
+\textbf{Trajectory:} Start at solved state $s_0$, iterate:
+$$s_0 \xrightarrow{T_M} s_1 \xrightarrow{T_M} s_2 \xrightarrow{T_M} \cdots$$
+
+\vspace{0.5em}
+
+\textbf{Period $p$:} Minimum $n$ such that $T_M^n(s_0) = s_0$
+\end{frame}
+
+\begin{frame}{Lyapunov Exponents}
+\textbf{Measuring Chaos:} How do perturbations grow?
+
+\vspace{1em}
+
+Given base sequence $M$ with period $p$, perturb it to $M'$:
+\begin{itemize}
+    \item Insert random move
+    \item Remove a move
+    \item Replace with different move
+\end{itemize}
+
+\vspace{1em}
+
+Compute period $p'$ of perturbed sequence $M'$:
+$$\lambda = \frac{1}{N} \sum_{i=1}^{N} \ln\left|\frac{p'_i}{p}\right|$$
+
+\vspace{1em}
+
+\textbf{Classification:}
+\begin{itemize}
+    \item $\lambda < 0.1$: \textcolor{blue}{Regular/Trivial}
+    \item $0.1 \le \lambda < \ln(2)$: \textcolor{orange}{Sensitive}
+    \item $\lambda \ge \ln(2) \approx 0.69$: \textcolor{red}{Chaotic}
+\end{itemize}
+\end{frame}
+
+\section{Methods}
+
+\begin{frame}{Computational Approach}
+\textbf{Tool Stack:}
+\begin{itemize}
+    \item \texttt{ctrl/} - Rust trajectory analyzer (fast orbit detection)
+    \item \texttt{obsv/} - Python statistical analysis (Lyapunov computation)
+    \item \texttt{disp/} - Octave/MATLAB visualization
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Systematic Testing:}
+\begin{enumerate}
+    \item Test all 64 two-move combinations (FR, UF, OR, ...)
+    \item Compute periods using cycle detection (SHA256 state hashing)
+    \item For interesting sequences: compute Lyapunov exponents
+    \item Generate 10-20 perturbations per sequence
+    \item Classify behavior: regular/sensitive/chaotic
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{Puzzle:} 3×3×3×3 hypercube (via Hyperspeedcube library)
+\end{frame}
+
+\section{Results}
+
+\begin{frame}{Key Findings}
+\textbf{Single Moves:} All have period 8 (trivial, $\lambda = 0$)
+
+\vspace{0.5em}
+
+\textbf{Most Chaotic Sequences:}
+\begin{center}
+\begin{tabular}{llrr}
+\toprule
+\textbf{Sequence} & \textbf{Length} & \textbf{Period} & \textbf{$\lambda$} \\
+\midrule
+FR → FR & 2 & 4 & \textcolor{red}{5.94} \\
+FO → FO & 2 & 4 & \textcolor{red}{\textbf{6.09}} \\
+OF → OU → OB → OD & 4 & 6 & \textcolor{red}{5.64} \\
+FR → OR → FL → OL & 4 & 12 & \textcolor{red}{4.65} \\
+\midrule
+FR → UF & 2 & 10,080 & \textcolor{red}{3.95} \\
+FR → UO & 2 & 840 & \textcolor{red}{2.81} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{Surprising:} Self-compositions (FR→FR, FO→FO) are \textit{extremely} chaotic despite short periods!
+\end{frame}
+
+\begin{frame}{Period vs Chaos}
+\begin{center}
+\includegraphics[width=0.75\textwidth]{../disp/figures/period_vs_lambda.png}
+\end{center}
+
+\textbf{Key Insight:} Short periods $\ne$ simple behavior\\
+Highly chaotic sequences can have very short orbits!
+\end{frame}
+
+\begin{frame}{Classification Distribution}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{../disp/figures/classification_pie.png}
+
+\column{0.5\textwidth}
+\textbf{Results (50 sequences):}
+
+\vspace{1em}
+
+\begin{itemize}
+    \item \textcolor{blue}{Regular}: 15 sequences (30\%)
+    \item \textcolor{orange}{Sensitive}: 12 sequences (24\%)
+    \item \textcolor{red}{Chaotic}: 23 sequences (46\%)
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Observation:} Nearly half of tested sequences exhibit chaotic behavior!
+\end{columns}
+\end{frame}
+
+\begin{frame}{Top Chaotic Sequences}
+\begin{center}
+\includegraphics[width=0.85\textwidth]{../disp/figures/top_chaotic_sequences.png}
+\end{center}
+
+Self-compositions dominate the top rankings!
+\end{frame}
+
+\begin{frame}{Lyapunov vs Sequence Length}
+\begin{center}
+\includegraphics[width=0.75\textwidth]{../disp/figures/lyapunov_vs_length.png}
+\end{center}
+
+\textbf{Observation:} Highest chaos occurs at length 2 (self-compositions and pairs)
+\end{frame}
+
+\section{Visualizations}
+
+\begin{frame}{Sequence Animations}
+\begin{center}
+\textbf{Animated GIFs available in \texttt{disp/figures/}}
+
+\vspace{1em}
+
+\begin{itemize}
+    \item \texttt{sequence\_FR\_single.gif} - Baseline (Period 8, $\lambda = 0$)
+    \item \texttt{sequence\_FO\_FO.gif} - \textcolor{red}{Most chaotic!} (Period 4, $\lambda = 6.09$)
+    \item \texttt{sequence\_FR\_FR.gif} - Second most chaotic (Period 4, $\lambda = 5.94$)
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Self-compositions create complex scrambling patterns
+    \item Despite short periods (4 iterations), produce extreme chaos
+    \item Visual inspection shows rapid state divergence
+\end{itemize}
+
+\vspace{0.5em}
+
+\small{\textit{Note: GIFs show complete orbits (return to solved state)}}
+\end{center}
+\end{frame}
+
+\section{Conclusions}
+
+\begin{frame}{Key Takeaways}
+\begin{enumerate}
+    \item \textbf{4D hypercubes exhibit rich dynamics}
+    \begin{itemize}
+        \item 46\% of tested sequences are chaotic
+        \item Periods range from 4 to 10,080
+    \end{itemize}
+    
+    \vspace{0.5em}
+    
+    \item \textbf{Self-compositions are extremely chaotic}
+    \begin{itemize}
+        \item FR→FR, FO→FO have highest Lyapunov exponents ($\lambda > 5$)
+        \item Despite having very short periods (4 iterations)
+    \end{itemize}
+    
+    \vspace{0.5em}
+    
+    \item \textbf{Period $\ne$ complexity}
+    \begin{itemize}
+        \item Short orbits can be highly chaotic
+        \item Long periods don't guarantee chaos
+    \end{itemize}
+    
+    \vspace{0.5em}
+    
+    \item \textbf{Discrete chaos is real}
+    \begin{itemize}
+        \item Small perturbations cause massive orbit changes
+        \item Lyapunov exponents successfully quantify sensitivity
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Future Directions}
+\textbf{Theoretical:}
+\begin{itemize}
+    \item Why are self-compositions so chaotic?
+    \item Connection to group theory structure?
+    \item Predict chaotic sequences from move properties?
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Computational:}
+\begin{itemize}
+    \item Test 5D+ hypercubes (if computationally feasible)
+    \item Explore longer sequences (3-4+ moves)
+    \item Investigate other perturbation types
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Applications:}
+\begin{itemize}
+    \item Cryptographic pseudo-random generators?
+    \item Physical systems with discrete symmetries?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{References}
+\footnotesize
+
+\textbf{Theory \& Background:}
+\begin{itemize}
+    \item Devaney, R. L. (2003). \textit{An Introduction to Chaotic Dynamical Systems}
+    \item Joyner, D. (2008). \textit{Adventures in Group Theory: Rubik's Cube, Merlin's Machine, and Other Mathematical Toys}
+    \item Rokicki, T. et al. (2014). \textit{The diameter of the Rubik's Cube group is twenty}
+    \item Strogatz, S. H. (2015). \textit{Nonlinear Dynamics and Chaos}
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Software \& Tools:}
+\begin{itemize}
+    \item \textbf{Hyperspeedcube} - HactarCE/Andrew J. Farkas\\
+    \url{https://github.com/HactarCE/Hyperspeedcube}\\
+    (MIT/Apache-2.0 License)
+    \item \textbf{Rust}: clap, serde, sha2, hyperpuzzle ecosystem
+    \item \textbf{Python}: NumPy, SciPy, Matplotlib, Pandas
+    \item \textbf{Octave/MATLAB}: Visualization \& plotting
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\Huge Thank You!
+
+\vspace{2em}
+
+\normalsize
+\textbf{Questions?}
+
+\vspace{2em}
+
+\small
+Code: \texttt{github.com/ltpie123/final}\\
+Tools: Rust (ctrl), Python (obsv), Octave (disp)
+\end{center}
+\end{frame}
+
+\end{document}

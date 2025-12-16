@@ -1,0 +1,11 @@
+[package]
+name = "hypercube-renderer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyperpuzzle = { path = "../hyper/Hyperspeedcube/crates/hyperpuzzle" }
+hyperpuzzle_view = { path = "../hyper/Hyperspeedcube/crates/hyperpuzzle_view" }
+hyperdraw = { path = "../hyper/Hyperspeedcube/crates/hyperdraw" }
+image = "0.24"
+eyre = "0.6"
