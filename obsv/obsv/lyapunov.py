@@ -121,13 +121,16 @@ class LyapunovAnalyzer:
         log_ratios = [np.log(r) for r in period_ratios]
         lyapunov = np.mean(log_ratios)
 
-        # Classify behavior
-        if lyapunov > 0.69:  # log(2) ≈ 0.69
-            classification = "chaotic"
-        elif lyapunov > 0.1:
-            classification = "sensitive"
+        # Classify behavior (data-driven thresholds based on distribution)
+        # Note: System shows sharp phase transition - no "sensitive" middle ground
+        if lyapunov == 0.0:
+            classification = "trivial"           # Single moves only
+        elif lyapunov < 2.0:
+            classification = "weakly_chaotic"    # Below median
+        elif lyapunov < 4.0:
+            classification = "strongly_chaotic"  # Above median
         else:
-            classification = "regular"
+            classification = "extremely_chaotic" # Top outliers
 
         print(f"  → Lyapunov exponent: λ = {lyapunov:.3f} ({classification})")
 
@@ -231,13 +234,16 @@ class LyapunovAnalyzer:
         log_ratios = [np.log(r) for r in period_ratios]
         lyapunov = np.mean(log_ratios)
 
-        # Classify behavior
-        if lyapunov > 0.69:  # log(2) ≈ 0.69
-            classification = "chaotic"
-        elif lyapunov > 0.1:
-            classification = "sensitive"
+        # Classify behavior (data-driven thresholds based on distribution)
+        # Note: System shows sharp phase transition - no "sensitive" middle ground
+        if lyapunov == 0.0:
+            classification = "trivial"           # Single moves only
+        elif lyapunov < 2.0:
+            classification = "weakly_chaotic"    # Below median
+        elif lyapunov < 4.0:
+            classification = "strongly_chaotic"  # Above median
         else:
-            classification = "regular"
+            classification = "extremely_chaotic" # Top outliers
 
         print(f"  → Lyapunov exponent: λ = {lyapunov:.3f} ({classification})")
 
@@ -468,9 +474,10 @@ class LyapunovAnalyzer:
                 'max_lambda': float(np.max(exponents)),
             },
             'classifications': {
-                'chaotic': classifications.count('chaotic'),
-                'sensitive': classifications.count('sensitive'),
-                'regular': classifications.count('regular'),
+                'trivial': classifications.count('trivial'),
+                'weakly_chaotic': classifications.count('weakly_chaotic'),
+                'strongly_chaotic': classifications.count('strongly_chaotic'),
+                'extremely_chaotic': classifications.count('extremely_chaotic'),
             },
             'by_length': {}
         }
