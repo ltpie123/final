@@ -104,14 +104,16 @@ cargo run --release -- \
 
 ### Must Have (MVP)
 
-- [ ] Set up Rust workspace in `ctrl/` with Hyperspeedcube dependency
-- [ ] Load 3x3x3x3 puzzle from catalog
+- [x] Set up Rust workspace in `ctrl/` with Hyperspeedcube dependency
+- [x] Load 3x3x3x3 puzzle from catalog
+- [ ] **Support multiple puzzles/dimensions** (3x3x3, 3x3x3x3, optionally 2x2x2, 2x2x2x2)
 - [ ] Parse move notation (convert "R", "U" strings to LayeredTwist)
 - [ ] Implement basic BFS orbit exploration
 - [ ] Add state deduplication (hashing)
-- [ ] Export orbit size and basic stats to JSON
-- [ ] Add CLI arguments (moves, max-depth, output path)
+- [ ] Export orbit size and basic stats to JSON (include dimension info)
+- [ ] Add CLI arguments (puzzle-id, moves, max-depth, output path)
 - [ ] Test with small move set (depth limit ~5-6 initially)
+- [ ] **Run orbit analysis across dimensions** and compare results
 
 ### Nice to Have (Phase 1)
 
@@ -175,9 +177,53 @@ After Phase 1 is working and bugs are resolved, we'll add:
   - Embed generated visualizations
   - Mathematical analysis writeup
 
+## Cross-Dimensional Orbit Analysis
+
+### Puzzles to Compare
+
+1. **2x2x2** (Pocket Cube) - Puzzle ID: `ft_cube:2`
+   - Simple 3D case for baseline
+   - Small orbit size, good for validation
+
+2. **3x3x3** (Rubik's Cube) - Puzzle ID: `ft_cube:3`
+   - Classic 3D reference
+   - Well-known orbit sizes for RU moves
+
+3. **2x2x2x2** (4D Pocket Cube) - Puzzle ID: `ft_hypercube:2`
+   - Simplest 4D case
+   - Direct comparison with 2x2x2
+
+4. **3x3x3x3** (4D Rubik's Cube) - Puzzle ID: `ft_hypercube:3`
+   - Main focus of analysis
+   - Compare growth vs 3x3x3
+
+### Key Questions to Answer
+
+- How does orbit size scale with dimension for the same move set?
+- How does max depth (God's number) change across dimensions?
+- Are there structural similarities in the orbit graphs?
+- Do certain patterns emerge in higher dimensions?
+
+### Output Format
+
+Each run should produce:
+```json
+{
+  "puzzle_id": "ft_hypercube:3",
+  "puzzle_name": "3x3x3x3",
+  "dimension": 4,
+  "move_set": ["R", "U"],
+  "orbit_size": 12345,
+  "max_depth": 15,
+  "states_by_depth": [1, 6, 24, ...],
+  "exploration_time_ms": 1234
+}
+```
+
 ## Notes
 
 - For 3x3x3x3 with RU moves, the orbit might be huge - may need to implement depth limits
+- Start with 2x2x2 and 2x2x2x2 first (smaller orbits) to validate correctness
 - State hashing: need efficient serialization of puzzle states for deduplication
 - Consider using parallel processing (rayon) if performance is an issue
 - Can add visualization generation later using Python scripts that read the JSON output

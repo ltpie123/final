@@ -1,0 +1,30 @@
+# Rust build artifacts
+/ctrl/target/
+/ctrl/Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Output files
+*.json
+*.csv
+*.dot
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python (for future disp/ scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+venv/
+.env
+
+# Results directory (but keep the directory structure)
+results/*
+!results/.gitkeep
