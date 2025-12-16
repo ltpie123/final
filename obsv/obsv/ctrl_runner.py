@@ -17,10 +17,11 @@ class CtrlRunner:
         """Initialize the runner.
 
         Args:
-            ctrl_path: Path to ctrl directory. Defaults to ../ctrl relative to this file.
+            ctrl_path: Path to ctrl directory. Defaults to ../../ctrl relative to this file.
         """
         if ctrl_path is None:
-            ctrl_path = Path(__file__).parent.parent / "ctrl"
+            # From obsv/obsv/ctrl_runner.py -> obsv/obsv/ -> obsv/ -> final/ -> final/ctrl/
+            ctrl_path = Path(__file__).parent.parent.parent / "ctrl"
         self.ctrl_path = ctrl_path.resolve()
 
     def run_sequence(
