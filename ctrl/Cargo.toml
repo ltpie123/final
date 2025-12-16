@@ -4,3 +4,16 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+# Hyperspeedcube puzzle library
+hyperpuzzle = { path = "../hyper/Hyperspeedcube/crates/hyperpuzzle" }
+hyperpuzzle_core = { path = "../hyper/Hyperspeedcube/crates/hyperpuzzle_core" }
+
+# Command-line interface
+clap = { version = "4.5", features = ["derive"] }
+
+# Serialization for exports
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Data structures
+indexmap = "2.0"
