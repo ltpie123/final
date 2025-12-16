@@ -1,0 +1,3 @@
+[submodule "hyper/Hyperspeedcube"]
+	path = hyper/Hyperspeedcube
+	url = git@github.com:HactarCE/Hyperspeedcube.git
