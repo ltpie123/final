@@ -8,6 +8,8 @@
 \usepackage{booktabs}
 \usepackage{tikz}
 \usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \title{Chaos in Hyperdimensional Rubik's Cubes}
 \subtitle{Discrete Dynamical Systems on 4D Puzzles}
@@ -45,9 +47,16 @@
 \begin{itemize}
     \item 3×3×3×3 puzzle
     \item \textcolor{red}{8 cells} (3D "faces")
-    \item State space exponentially larger
+    \item State space: $|S| \approx 1.76 \times 10^{120}$
     \item Rotations in 4D space
 \end{itemize}
+
+\vspace{0.5em}
+
+\begin{block}{State Space Formula}
+\footnotesize
+$$|S| = \frac{16!}{2} \cdot 12^{15} \cdot 4 \cdot 32! \cdot 6^{31} \cdot 3 \cdot \frac{24!}{2} \cdot 2^{23}$$
+\end{block}
 
 \column{0.5\textwidth}
 \centering
@@ -68,6 +77,60 @@ OR & Outside → Right \\
 \vspace{1em}
 
 \textit{Two-letter notation for 4D rotations}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Puzzle Structure \& Symmetry}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Piece Types (72 movable):}
+\begin{itemize}
+    \item \textbf{16 corners} (4-color pieces)
+    \begin{itemize}
+        \footnotesize
+        \item 12 orientations each
+    \end{itemize}
+    \item \textbf{32 faces} (3-color pieces)
+    \begin{itemize}
+        \footnotesize
+        \item 6 orientations each
+    \end{itemize}
+    \item \textbf{24 edges} (2-color pieces)
+    \begin{itemize}
+        \footnotesize
+        \item 2 orientations each
+    \end{itemize}
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Each quarter turn affects:}
+\begin{itemize}
+    \item 8 corners, 12 faces, 4 edges
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Symmetry Group:}
+
+The 4D tesseract has symmetry group $B_4$ (hyperoctahedral group):
+
+$$|B_4| = 2^4 \cdot 4! = 384$$
+
+\vspace{0.5em}
+
+\textbf{Structure:} $S_2 \wr S_4$ (wreath product)
+
+\vspace{0.5em}
+
+\textbf{Coxeter notation:} $[4,3,3]$
+
+\vspace{0.5em}
+
+\textbf{Rotational subgroup:} Order 192
+
+\vspace{1em}
+
+This rich group structure enables complex dynamics!
 \end{columns}
 \end{frame}
 
@@ -111,6 +174,42 @@ $$s_0 \xrightarrow{T_M} s_1 \xrightarrow{T_M} s_2 \xrightarrow{T_M} \cdots$$
 \vspace{0.5em}
 
 \textbf{Period $p$:} Minimum $n$ such that $T_M^n(s_0) = s_0$
+
+\vspace{1em}
+
+\begin{block}{Group-Theoretic View}
+Let $G$ be the puzzle group. Each move $m_i \in G$ is a bijection with $m_i^{-1} \circ m_i = \text{id}$.
+
+The sequence generates a cyclic subgroup:
+$$\langle T_M \rangle = \{T_M^0, T_M^1, \ldots, T_M^{p-1}\} \subseteq G$$
+where $|\langle T_M \rangle| = p$ (the period).
+\end{block}
+\end{frame}
+
+\begin{frame}{Permutation Theory \& Constraints}
+\textbf{State Representation:}
+
+Each configuration is a permutation + orientation:
+$$s = (\pi, o) \in S$$
+where $\pi$ permutes pieces, $o$ specifies orientations.
+
+\vspace{1em}
+
+\textbf{Parity Constraints:}
+\begin{enumerate}
+    \item \textbf{Corner parity}: 4c pieces must form \textit{even} permutations
+    $$\pi_{4c} \in A_{16} \subset S_{16}$$
+    
+    \item \textbf{Edge-Face parity}: Linked permutation parity
+    $$\text{sgn}(\pi_{2c}) = \text{sgn}(\pi_{3c})$$
+    
+    \item \textbf{Orientation sums}:
+    $$\sum_{i=1}^{31} o_{3c,i} \equiv 0 \pmod{3}, \quad \sum_{i=1}^{23} o_{2c,i} \equiv 0 \pmod{2}$$
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Monoflip Invariant (unique to 4D):} A single 4c piece can be "flipped" with all others solved, related to $A_4$ orientation group.
 \end{frame}
 
 \begin{frame}{Lyapunov Exponents}
@@ -132,12 +231,49 @@ $$\lambda = \frac{1}{N} \sum_{i=1}^{N} \ln\left|\frac{p'_i}{p}\right|$$
 
 \vspace{1em}
 
+\begin{block}{Discrete Lyapunov Exponent}
+\footnotesize
+Continuous systems: $\lambda = \lim_{t \to \infty} \frac{1}{t} \ln \frac{||\delta(t)||}{||\delta(0)||}$
+
+Our adaptation: $\lambda_{\text{discrete}} = \mathbb{E}\left[\ln\left|\frac{p'}{p}\right|\right]$ measures sensitivity in sequence space
+\end{block}
+
+\vspace{1em}
+
 \textbf{Classification:}
 \begin{itemize}
     \item $\lambda < 0.1$: \textcolor{blue}{Regular/Trivial}
     \item $0.1 \le \lambda < \ln(2)$: \textcolor{orange}{Sensitive}
     \item $\lambda \ge \ln(2) \approx 0.69$: \textcolor{red}{Chaotic}
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Chaos in Finite Systems}
+\textbf{Challenge:} Classical chaos requires:
+\begin{itemize}
+    \item Sensitive dependence on initial conditions
+    \item Topological mixing
+    \item Dense periodic orbits
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Problem:} Our system is finite ($|S| < \infty$), so all trajectories are periodic!
+
+\vspace{1em}
+
+\textbf{Solution:} Adapt chaos metrics to \textit{sequence space} rather than state space:
+\begin{enumerate}
+    \item Perturb the \textbf{move sequence} $M \to M'$ (not initial state)
+    \item Measure change in \textbf{orbit structure} ($p \to p'$)
+    \item Compute Lyapunov on period ratios
+\end{enumerate}
+
+\vspace{0.5em}
+
+\begin{block}{Key Insight}
+Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit structure) to small sequence perturbations, not trajectory divergence in state space.
+\end{block}
 \end{frame}
 
 \section{Methods}
@@ -164,6 +300,24 @@ $$\lambda = \frac{1}{N} \sum_{i=1}^{N} \ln\left|\frac{p'_i}{p}\right|$$
 \vspace{1em}
 
 \textbf{Puzzle:} 3×3×3×3 hypercube (via Hyperspeedcube library)
+
+\vspace{1em}
+
+\begin{block}{Cycle Detection Algorithm}
+\footnotesize
+\begin{algorithmic}[1]
+\State $s \gets s_0$, $\text{visited} \gets \{h(s_0): 0\}$
+\For{$n = 1, 2, \ldots, N_{\max}$}
+    \State $s \gets T_M(s)$ \Comment{Apply sequence}
+    \State $h \gets \text{SHA256}(s)$ \Comment{Hash state}
+    \If{$h \in \text{visited}$}
+        \State \Return $n - \text{visited}[h]$ \Comment{Period}
+    \EndIf
+    \State $\text{visited}[h] \gets n$
+\EndFor
+\end{algorithmic}
+\textbf{Complexity:} $O(p \cdot (T_M + H))$ where $p$ = period
+\end{block}
 \end{frame}
 
 \section{Results}
