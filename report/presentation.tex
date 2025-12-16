@@ -38,23 +38,21 @@
     \item 3×3×3 puzzle
     \item 6 faces (F, U, R, L, B, D)
     \item $\sim 4.3 \times 10^{19}$ states
-    \item Rotations in 3D space
 \end{itemize}
 
-\vspace{1em}
+\vspace{0.5em}
 
 \textbf{4D Hypercube:}
 \begin{itemize}
     \item 3×3×3×3 puzzle
     \item \textcolor{red}{8 cells} (3D "faces")
     \item State space: $|S| \approx 1.76 \times 10^{120}$
-    \item Rotations in 4D space
 \end{itemize}
 
 \vspace{0.3em}
 
 \begin{block}{State Space Formula}
-\tiny
+\scriptsize
 $$|S| = \frac{16!}{2} \cdot 12^{15} \cdot 4 \cdot 32! \cdot 6^{31} \cdot 3 \cdot \frac{24!}{2} \cdot 2^{23}$$
 \end{block}
 
@@ -196,43 +194,38 @@ Chaos manifests as \textbf{sensitivity of dynamical properties} (period, orbit s
 \begin{frame}{Computational Approach}
 \textbf{Tool Stack:}
 \begin{itemize}
-    \item \texttt{ctrl/} - Rust trajectory analyzer (fast orbit detection)
-    \item \texttt{obsv/} - Python statistical analysis (Lyapunov computation)
+    \item \texttt{ctrl/} - Rust trajectory analyzer
+    \item \texttt{obsv/} - Python statistical analysis
     \item \texttt{disp/} - Octave/MATLAB visualization
 \end{itemize}
 
-\vspace{1em}
+\vspace{0.3em}
 
 \textbf{Systematic Testing:}
 \begin{enumerate}
-    \item Test all 64 two-move combinations (FR, UF, OR, ...)
-    \item Compute periods using cycle detection (SHA256 state hashing)
-    \item For interesting sequences: compute Lyapunov exponents
-    \item Generate 10-20 perturbations per sequence
-    \item Classify behavior: regular/sensitive/chaotic
+    \item Test all 64 two-move combinations
+    \item Compute periods using cycle detection
+    \item Compute Lyapunov exponents (10-20 perturbations)
+    \item Classify: regular/sensitive/chaotic
 \end{enumerate}
 
-\vspace{1em}
+\vspace{0.3em}
 
-\textbf{Puzzle:} 3×3×3×3 hypercube (via Hyperspeedcube library)
+\textbf{Puzzle:} 3×3×3×3 hypercube (Hyperspeedcube library)
 
-\vspace{0.5em}
+\vspace{0.3em}
 
 \begin{block}{Cycle Detection Algorithm}
-\tiny
+\scriptsize
 \begin{algorithmic}[1]
 \State $s \gets s_0$, $\text{visited} \gets \{h(s_0): 0\}$
 \For{$n = 1, 2, \ldots, N_{\max}$}
-    \State $s \gets T_M(s)$ \Comment{Apply sequence}
-    \State $h \gets \text{SHA256}(s)$ \Comment{Hash state}
-    \If{$h \in \text{visited}$}
-        \State \Return $n - \text{visited}[h]$ \Comment{Period}
-    \EndIf
+    \State $s \gets T_M(s)$, $h \gets \text{SHA256}(s)$
+    \If{$h \in \text{visited}$} \Return $n - \text{visited}[h]$ \EndIf
     \State $\text{visited}[h] \gets n$
 \EndFor
 \end{algorithmic}
-\vspace{0.2em}
-\textbf{Complexity:} $O(p \cdot (T_M + H))$ where $p$ = period
+\textbf{Complexity:} $O(p \cdot (T_M + H))$
 \end{block}
 \end{frame}
 
